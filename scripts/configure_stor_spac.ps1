@@ -25,7 +25,7 @@ netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" n
 Write-Output 'Enable WMI Firewall Exception on Servers' | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 netsh advfirewall firewall set rule group="Windows Management Instrumentation (WMI)" new enable=Yes
 
-$secpasswd     = ConvertTo-SecureString $Cred_Psswd -AsPlainText -Force
+$secpasswd     = ConvertTo-SecureStringÂ $Cred_Psswd -AsPlainText -Force
 $cred          = New-Object System.Management.Automation.PSCredential ($Cred_User, $secpasswd)
 $clusternodes  = @()
 
@@ -87,7 +87,7 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 
 	try {
 		Write-Output "Create Cluster: $Using:stClsName" | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
-		New-Cluster -Name $Using:stClsName -Node $Using:clusternodes –NoStorage –StaticAddress $Using:staticIp -Verbose | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
+		New-Cluster -Name $Using:stClsName -Node $Using:clusternodes â€“NoStorage â€“StaticAddress $Using:staticIp -Verbose | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 	} Catch {
 		$ErrorMessage = $_.Exception.Message | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 		$FailedItem = $_.Exception.ItemName | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
@@ -97,7 +97,7 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 
 	try {
 		Write-Output "Setting Cloud Witness for Cluster: $Using:stClsName to StorageAccount $Using:StorageAccount" | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
-		Set-ClusterQuorum –CloudWitness –AccountName $Using:StorageAccount  -AccessKey $Using:AccountKey | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
+		Set-ClusterQuorum â€“CloudWitness â€“AccountName $Using:StorageAccount  -AccessKey $Using:AccountKey | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 	} Catch {
 		$ErrorMessage = $_.Exception.Message | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 		$FailedItem = $_.Exception.ItemName | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
@@ -124,7 +124,7 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 		$FailedItem = $_.Exception.ItemName | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 		Break
 	}
-	Start-Sleep -s 15
+	Start-Sleep -s 300
 
 	try {
 		$computer        = Get-ADComputer $Using:stClsName 
