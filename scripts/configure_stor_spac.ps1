@@ -25,7 +25,7 @@ netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" n
 Write-Output 'Enable WMI Firewall Exception on Servers' | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 netsh advfirewall firewall set rule group="Windows Management Instrumentation (WMI)" new enable=Yes
 
-$secpasswd     = ConvertTo-SecureString $Cred_Psswd -AsPlainText -Force
+$secpasswd     = ConvertTo-SecureString $Cred_Psswd -AsPlainText -Force
 $cred          = New-Object System.Management.Automation.PSCredential ($Cred_User, $secpasswd)
 $clusternodes  = @()
 
@@ -68,7 +68,7 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 	
 	Write-Output "Enable CredSSP Fresh NTLM Only on $Using:activeNode" | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 	New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name AllowFreshCredentialsWhenNTLMOnly -Value 1 -PropertyType DWORD -Force | Out-Null
-	New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name ConcatenateDefaults_AllowFreshNTLMOnly -Value 1 -PropertyType DWORD -Force | Out-Null
+	New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation Name ConcatenateDefaults_AllowFreshNTLMOnly -Value 1 -PropertyType DWORD -Force | Out-Null
 	New-Item -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation -Name AllowFreshCredentialsWhenNTLMOnly -Force | Out-Null
 	New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation\AllowFreshCredentialsWhenNTLMOnly -Name 1 -Value $wsman -PropertyType String -Force | Out-Null
 }
@@ -87,7 +87,7 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 
 	try {
 		Write-Output "Create Cluster: $Using:stClsName" | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
-		New-Cluster -Name $Using:stClsName -Node $Using:clusternodes –NoStorage –StaticAddress $Using:staticIp -Verbose | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
+		New-Cluster -Name $Using:stClsName -Node $Using:clusternodes -NoStorage -StaticAddress $Using:staticIp -Verbose | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 	} Catch {
 		$ErrorMessage = $_.Exception.Message | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 		$FailedItem = $_.Exception.ItemName | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
@@ -97,7 +97,7 @@ Invoke-Command -ComputerName $activeNode -Credential $cred -ScriptBlock {
 
 	try {
 		Write-Output "Setting Cloud Witness for Cluster: $Using:stClsName to StorageAccount $Using:StorageAccount" | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
-		Set-ClusterQuorum –CloudWitness –AccountName $Using:StorageAccount  -AccessKey $Using:AccountKey | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
+		Set-ClusterQuorum -CloudWitness -AccountName $Using:StorageAccount  -AccessKey $Using:AccountKey | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 	} Catch {
 		$ErrorMessage = $_.Exception.Message | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
 		$FailedItem = $_.Exception.ItemName | Out-File -FilePath 'C:\WINDOWS\Temp\s2d_log.log' -Append
